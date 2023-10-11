@@ -50,9 +50,9 @@ async function hasTaskNumber() {
 }
 
 async function missingAssignees() {
-  const { isAsigneeRequired } = useInputs();
+  const { isAssigneeRequired } = useInputs();
 
-  if (!isAsigneeRequired) {
+  if (!isAssigneeRequired) {
     return false;
   }
 

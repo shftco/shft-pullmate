@@ -70,7 +70,9 @@ function parseContentAsJSON(): CheckListNodeType[] {
 function checkedTaskId() {
   const parsed = parseContentAsJSON();
 
-  const taskQuestion = parsed.find(item => item.q === QUESTIONS.HAVE_TASK_ID);
+  const taskQuestion = parsed.find(
+    item => item.q.trim() === QUESTIONS.HAVE_TASK_ID.trim()
+  );
 
   return taskQuestion?.isChecked ?? false;
 }

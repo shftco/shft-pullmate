@@ -9776,13 +9776,13 @@ const core = __importStar(__nccwpck_require__(2186));
 const constants_1 = __nccwpck_require__(6526);
 function useInputs() {
     const isReviewerRequired = Boolean(core.getInput(constants_1.INPUT_KEYS.REVIEWER_REQUIRED, { required: true }));
-    const isAsigneeRequired = Boolean(core.getInput(constants_1.INPUT_KEYS.ASSIGNEE_REQUIRED, { required: true }));
+    const isAssigneeRequired = Boolean(core.getInput(constants_1.INPUT_KEYS.ASSIGNEE_REQUIRED, { required: true }));
     const isChecklistRequired = Boolean(core.getInput(constants_1.INPUT_KEYS.CHECKLIST_REQUIRED, { required: true }));
     const isSemanticTitleRequired = Boolean(core.getInput(constants_1.INPUT_KEYS.SEMANTIC_TITLE_REQUIRED, { required: true }));
     const repoToken = core.getInput(constants_1.INPUT_KEYS.REPO_TOKEN, { required: true });
     return {
         isReviewerRequired,
-        isAsigneeRequired,
+        isAssigneeRequired,
         isChecklistRequired,
         isSemanticTitleRequired,
         repoToken
@@ -10070,7 +10070,7 @@ function parseContentAsJSON() {
 }
 function checkedTaskId() {
     const parsed = parseContentAsJSON();
-    const taskQuestion = parsed.find(item => item.q === constants_1.QUESTIONS.HAVE_TASK_ID);
+    const taskQuestion = parsed.find(item => item.q.trim() === constants_1.QUESTIONS.HAVE_TASK_ID.trim());
     return taskQuestion?.isChecked ?? false;
 }
 function checkedImageOrVideo() {
@@ -10190,8 +10190,8 @@ async function hasTaskNumber() {
     return true;
 }
 async function missingAssignees() {
-    const { isAsigneeRequired } = (0, hooks_1.useInputs)();
-    if (!isAsigneeRequired) {
+    const { isAssigneeRequired } = (0, hooks_1.useInputs)();
+    if (!isAssigneeRequired) {
         return false;
     }
     const { isAssigned } = await getPRInfo();

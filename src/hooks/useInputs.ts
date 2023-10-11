@@ -4,7 +4,7 @@ import { INPUT_KEYS } from '@app/constants';
 
 type UseInputsReturnTypes = {
   isReviewerRequired: boolean;
-  isAsigneeRequired: boolean;
+  isAssigneeRequired: boolean;
   isChecklistRequired: boolean;
   isSemanticTitleRequired: boolean;
   repoToken: string;
@@ -15,7 +15,7 @@ export default function useInputs(): UseInputsReturnTypes {
     core.getInput(INPUT_KEYS.REVIEWER_REQUIRED, { required: true })
   );
 
-  const isAsigneeRequired = Boolean(
+  const isAssigneeRequired = Boolean(
     core.getInput(INPUT_KEYS.ASSIGNEE_REQUIRED, { required: true })
   );
 
@@ -31,7 +31,7 @@ export default function useInputs(): UseInputsReturnTypes {
 
   return {
     isReviewerRequired,
-    isAsigneeRequired,
+    isAssigneeRequired,
     isChecklistRequired,
     isSemanticTitleRequired,
     repoToken
