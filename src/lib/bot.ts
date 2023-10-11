@@ -24,16 +24,18 @@ async function removeOldPRComments() {
 }
 
 async function commentErrors(errors: string[]) {
+  await removeOldPRComments();
+
   const octokit = useOctokit();
+  const checklistErrors = checklist.extractErrorMessages();
   const errorsBody = errors
     .map((item: string) => `- :red_circle: **${item}**`)
     .join('\n');
-  const checklistErrorsBody = checklist
-    .extractErrorMessages()
+  const checklistErrorsBody = checklistErrors
     .map((item: string) => `- ${item}`)
     .join('\n');
 
-  const hasErrors = errors.length > 0 || checklistErrorsBody.length > 0;
+  const hasErrors = errors.length > 0 || checklistErrors.length > 0;
   const messageBody = hasErrors
     ? `BOT MESSAGE :robot:\n\n\n${errorsBody}\n${checklistErrorsBody}`
     : 'All good for checklist :green_circle:';
@@ -43,7 +45,6 @@ async function commentErrors(errors: string[]) {
     issue_number: github.context.issue.number,
     body: messageBody
   });
-  await removeOldPRComments();
 }
 
 export default { commentErrors };
