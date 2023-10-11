@@ -1,4 +1,5 @@
 import * as github from '@actions/github';
+import * as core from '@actions/core';
 
 import { useOctokit } from '@app/hooks';
 import { checklist } from '@app/lib';
@@ -36,6 +37,11 @@ async function commentErrors(errors: string[]) {
     .join('\n');
 
   const hasErrors = errors.length > 0 || checklistErrors.length > 0;
+
+  if (hasErrors) {
+    core.setFailed('Some requirements are not met');
+  }
+
   const messageBody = hasErrors
     ? `BOT MESSAGE :robot:\n\n\n${errorsBody}\n${checklistErrorsBody}`
     : 'All good for checklist :green_circle:';

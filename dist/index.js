@@ -9863,6 +9863,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const github = __importStar(__nccwpck_require__(5438));
+const core = __importStar(__nccwpck_require__(2186));
 const hooks_1 = __nccwpck_require__(1329);
 const lib_1 = __nccwpck_require__(6791);
 async function removeOldPRComments() {
@@ -9882,15 +9883,19 @@ async function removeOldPRComments() {
     });
 }
 async function commentErrors(errors) {
+    await removeOldPRComments();
     const octokit = (0, hooks_1.useOctokit)();
+    const checklistErrors = lib_1.checklist.extractErrorMessages();
     const errorsBody = errors
         .map((item) => `- :red_circle: **${item}**`)
         .join('\n');
-    const checklistErrorsBody = lib_1.checklist
-        .extractErrorMessages()
+    const checklistErrorsBody = checklistErrors
         .map((item) => `- ${item}`)
         .join('\n');
-    const hasErrors = errors.length > 0 || checklistErrorsBody.length > 0;
+    const hasErrors = errors.length > 0 || checklistErrors.length > 0;
+    if (hasErrors) {
+        core.setFailed('Some requirements are not met');
+    }
     const messageBody = hasErrors
         ? `BOT MESSAGE :robot:\n\n\n${errorsBody}\n${checklistErrorsBody}`
         : 'All good for checklist :green_circle:';
@@ -9899,7 +9904,6 @@ async function commentErrors(errors) {
         issue_number: github.context.issue.number,
         body: messageBody
     });
-    await removeOldPRComments();
 }
 exports["default"] = { commentErrors };
 
