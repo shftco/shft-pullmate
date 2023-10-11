@@ -1,4 +1,5 @@
 import * as github from '@actions/github';
+import * as core from '@actions/core';
 
 import { repository, pullRequest } from '@app/lib';
 import { CHECKLIST_KEYS, QUESTIONS } from '@app/constants';
@@ -104,6 +105,9 @@ async function missingImageOrVideo() {
 async function missingTaskId() {
   const isValid = await pullRequest.hasTaskNumber();
   const isChecked = checkedTaskId();
+
+  core.debug(`Task ID is valid: ${isValid}`);
+  core.debug(`Task ID is checked: ${isChecked}`);
 
   if (isChecked) {
     return isValid;

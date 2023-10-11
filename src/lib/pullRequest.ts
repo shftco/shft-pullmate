@@ -42,6 +42,9 @@ async function hasTaskNumber() {
   const regex = /\[(.*?)\]/g;
   const taskNumber = title.match(regex);
 
+  core.debug(`Task number: ${taskNumber}`);
+  core.debug(`Task title: ${title}`);
+
   if (!taskNumber) {
     return false;
   }
