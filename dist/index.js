@@ -9883,6 +9883,11 @@ async function removeOldPRComments() {
     });
 }
 async function commentErrors(errors) {
+    const { isDraft, PROwner } = await lib_1.pullRequest.getPRInfo();
+    if (isDraft) {
+        commentDraftPR();
+        return;
+    }
     await removeOldPRComments();
     const octokit = (0, hooks_1.useOctokit)();
     const checklistErrors = lib_1.checklist.extractErrorMessages();
@@ -9898,12 +9903,20 @@ async function commentErrors(errors) {
         core.setFailed(allErrors.join('\n'));
     }
     const messageBody = hasErrors
-        ? `BOT MESSAGE :robot:\n\n\n${errorsBody}\n${checklistErrorsBody}`
+        ? `BOT MESSAGE :robot:\n\n\n${errorsBody}\n${checklistErrorsBody}\n\n\n@${PROwner}`
         : 'BOT MESSAGE :robot:\n\n\nAll good for checklist :green_circle:';
     await octokit.rest.issues.createComment({
         ...github.context.repo,
         issue_number: github.context.issue.number,
         body: messageBody
+    });
+}
+async function commentDraftPR() {
+    const octokit = (0, hooks_1.useOctokit)();
+    await octokit.rest.issues.createComment({
+        ...github.context.repo,
+        issue_number: github.context.issue.number,
+        body: `BOT MESSAGE :robot:\n\n\nPullMate skips the checklist for draft PRs :construction:`
     });
 }
 exports["default"] = { commentErrors };
@@ -10139,28 +10152,26 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const github = __importStar(__nccwpck_require__(5438));
-const core = __importStar(__nccwpck_require__(2186));
 const hooks_1 = __nccwpck_require__(1329);
 const constants_1 = __nccwpck_require__(6526);
 async function getPRInfo() {
     const octokit = (0, hooks_1.useOctokit)();
-    const PR = await octokit.rest.issues.get({
+    const issue = await octokit.rest.issues.get({
         ...github.context.repo,
         issue_number: github.context.issue.number
+    });
+    const PR = await octokit.rest.pulls.get({
+        ...github.context.repo,
+        pull_number: github.context.issue.number
     });
     return {
-        title: PR?.data?.title ?? ''
+        title: issue?.data?.title ?? '',
+        isDraft: issue?.data?.draft ?? false,
+        isClosed: issue?.data?.state === 'closed',
+        isAssigned: !!issue?.data?.assignee,
+        hasReviewers: !!PR?.data?.requested_reviewers?.length,
+        PROwner: PR?.data?.user?.login ?? ''
     };
-}
-async function getAssigneesCount() {
-    const octokit = (0, hooks_1.useOctokit)();
-    const assignees = await octokit.rest.issues.listAssignees({
-        ...github.context.repo,
-        issue_number: github.context.issue.number
-    });
-    core.debug(`getAssigneesCount: ${assignees.data.length}`);
-    core.debug(`getAssigneesCount: ${JSON.stringify(assignees.data)}`);
-    return assignees.data.length;
 }
 async function hasSemanticTitle() {
     const { title } = await getPRInfo();
@@ -10178,18 +10189,13 @@ async function hasTaskNumber() {
     }
     return true;
 }
-async function hasAssignees() {
-    const count = await getAssigneesCount();
-    core.debug(`hasAssignees count: ${count}`);
-    return count > 0;
-}
 async function missingAssignees() {
     const { isAsigneeRequired } = (0, hooks_1.useInputs)();
-    core.debug(`isAsigneeRequired: ${isAsigneeRequired}`);
     if (!isAsigneeRequired) {
         return false;
     }
-    return !(await hasAssignees());
+    const { isAssigned } = await getPRInfo();
+    return !isAssigned;
 }
 async function missingSemanticTitle() {
     const { isSemanticTitleRequired } = (0, hooks_1.useInputs)();
@@ -10200,18 +10206,16 @@ async function missingSemanticTitle() {
 }
 async function missingReviewers() {
     const { isReviewerRequired } = (0, hooks_1.useInputs)();
-    const reviewers = github.context.payload.pull_request?.requested_reviewers;
+    const { hasReviewers } = await getPRInfo();
     if (!isReviewerRequired) {
         return false;
     }
-    return !reviewers;
+    return !hasReviewers;
 }
 exports["default"] = {
     getPRInfo,
     hasSemanticTitle,
     hasTaskNumber,
-    getAssigneesCount,
-    hasAssignees,
     missingAssignees,
     missingSemanticTitle,
     missingReviewers

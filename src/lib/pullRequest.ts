@@ -7,28 +7,24 @@ import { COMMIT_KEYS } from '@app/constants';
 async function getPRInfo() {
   const octokit = useOctokit();
 
-  const PR = await octokit.rest.issues.get({
+  const issue = await octokit.rest.issues.get({
     ...github.context.repo,
     issue_number: github.context.issue.number
+  });
+
+  const PR = await octokit.rest.pulls.get({
+    ...github.context.repo,
+    pull_number: github.context.issue.number
   });
 
   return {
-    title: PR?.data?.title ?? ''
+    title: issue?.data?.title ?? '',
+    isDraft: issue?.data?.draft ?? false,
+    isClosed: issue?.data?.state === 'closed',
+    isAssigned: !!issue?.data?.assignee,
+    hasReviewers: !!PR?.data?.requested_reviewers?.length,
+    PROwner: PR?.data?.user?.login ?? ''
   };
-}
-
-async function getAssigneesCount() {
-  const octokit = useOctokit();
-
-  const assignees = await octokit.rest.issues.listAssignees({
-    ...github.context.repo,
-    issue_number: github.context.issue.number
-  });
-
-  core.debug(`getAssigneesCount: ${assignees.data.length}`);
-  core.debug(`getAssigneesCount: ${JSON.stringify(assignees.data)}`);
-
-  return assignees.data.length;
 }
 
 async function hasSemanticTitle() {
@@ -53,23 +49,16 @@ async function hasTaskNumber() {
   return true;
 }
 
-async function hasAssignees() {
-  const count = await getAssigneesCount();
-  core.debug(`hasAssignees count: ${count}`);
-
-  return count > 0;
-}
-
 async function missingAssignees() {
   const { isAsigneeRequired } = useInputs();
-
-  core.debug(`isAsigneeRequired: ${isAsigneeRequired}`);
 
   if (!isAsigneeRequired) {
     return false;
   }
 
-  return !(await hasAssignees());
+  const { isAssigned } = await getPRInfo();
+
+  return !isAssigned;
 }
 
 async function missingSemanticTitle() {
@@ -84,21 +73,19 @@ async function missingSemanticTitle() {
 
 async function missingReviewers() {
   const { isReviewerRequired } = useInputs();
-  const reviewers = github.context.payload.pull_request?.requested_reviewers;
+  const { hasReviewers } = await getPRInfo();
 
   if (!isReviewerRequired) {
     return false;
   }
 
-  return !reviewers;
+  return !hasReviewers;
 }
 
 export default {
   getPRInfo,
   hasSemanticTitle,
   hasTaskNumber,
-  getAssigneesCount,
-  hasAssignees,
   missingAssignees,
   missingSemanticTitle,
   missingReviewers

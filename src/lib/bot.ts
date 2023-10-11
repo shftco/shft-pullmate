@@ -2,7 +2,7 @@ import * as github from '@actions/github';
 import * as core from '@actions/core';
 
 import { useOctokit } from '@app/hooks';
-import { checklist } from '@app/lib';
+import { checklist, pullRequest } from '@app/lib';
 
 async function removeOldPRComments() {
   const octokit = useOctokit();
@@ -25,6 +25,13 @@ async function removeOldPRComments() {
 }
 
 async function commentErrors(errors: string[]) {
+  const { isDraft, PROwner } = await pullRequest.getPRInfo();
+
+  if (isDraft) {
+    commentDraftPR();
+    return;
+  }
+
   await removeOldPRComments();
 
   const octokit = useOctokit();
@@ -45,13 +52,23 @@ async function commentErrors(errors: string[]) {
   }
 
   const messageBody = hasErrors
-    ? `BOT MESSAGE :robot:\n\n\n${errorsBody}\n${checklistErrorsBody}`
+    ? `BOT MESSAGE :robot:\n\n\n${errorsBody}\n${checklistErrorsBody}\n\n\n@${PROwner}`
     : 'BOT MESSAGE :robot:\n\n\nAll good for checklist :green_circle:';
 
   await octokit.rest.issues.createComment({
     ...github.context.repo,
     issue_number: github.context.issue.number,
     body: messageBody
+  });
+}
+
+async function commentDraftPR() {
+  const octokit = useOctokit();
+
+  await octokit.rest.issues.createComment({
+    ...github.context.repo,
+    issue_number: github.context.issue.number,
+    body: `BOT MESSAGE :robot:\n\n\nPullMate skips the checklist for draft PRs :construction:`
   });
 }
 
