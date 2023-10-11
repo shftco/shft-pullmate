@@ -102,7 +102,7 @@ async function missingImageOrVideo() {
 }
 
 async function missingTaskId() {
-  const isValid = pullRequest.hasTaskNumber();
+  const isValid = await pullRequest.hasTaskNumber();
   const isChecked = checkedTaskId();
 
   if (isChecked) {
