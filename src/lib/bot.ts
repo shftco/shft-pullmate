@@ -46,7 +46,7 @@ async function commentErrors(errors: string[]) {
 
   const messageBody = hasErrors
     ? `BOT MESSAGE :robot:\n\n\n${errorsBody}\n${checklistErrorsBody}`
-    : 'All good for checklist :green_circle:';
+    : 'BOT MESSAGE :robot:\n\n\nAll good for checklist :green_circle:';
 
   await octokit.rest.issues.createComment({
     ...github.context.repo,

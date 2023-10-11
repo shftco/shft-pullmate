@@ -9899,7 +9899,7 @@ async function commentErrors(errors) {
     }
     const messageBody = hasErrors
         ? `BOT MESSAGE :robot:\n\n\n${errorsBody}\n${checklistErrorsBody}`
-        : 'All good for checklist :green_circle:';
+        : 'BOT MESSAGE :robot:\n\n\nAll good for checklist :green_circle:';
     await octokit.rest.issues.createComment({
         ...github.context.repo,
         issue_number: github.context.issue.number,
@@ -10139,6 +10139,7 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const github = __importStar(__nccwpck_require__(5438));
+const core = __importStar(__nccwpck_require__(2186));
 const hooks_1 = __nccwpck_require__(1329);
 const constants_1 = __nccwpck_require__(6526);
 async function getPRInfo() {
@@ -10157,6 +10158,8 @@ async function getAssigneesCount() {
         ...github.context.repo,
         issue_number: github.context.issue.number
     });
+    core.debug(`getAssigneesCount: ${assignees.data.length}`);
+    core.debug(`getAssigneesCount: ${JSON.stringify(assignees.data)}`);
     return assignees.data.length;
 }
 async function hasSemanticTitle() {
@@ -10177,10 +10180,12 @@ async function hasTaskNumber() {
 }
 async function hasAssignees() {
     const count = await getAssigneesCount();
+    core.debug(`hasAssignees count: ${count}`);
     return count > 0;
 }
 async function missingAssignees() {
     const { isAsigneeRequired } = (0, hooks_1.useInputs)();
+    core.debug(`isAsigneeRequired: ${isAsigneeRequired}`);
     if (!isAsigneeRequired) {
         return false;
     }

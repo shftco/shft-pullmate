@@ -1,4 +1,5 @@
 import * as github from '@actions/github';
+import * as core from '@actions/core';
 
 import { useOctokit, useInputs } from '@app/hooks';
 import { COMMIT_KEYS } from '@app/constants';
@@ -23,6 +24,9 @@ async function getAssigneesCount() {
     ...github.context.repo,
     issue_number: github.context.issue.number
   });
+
+  core.debug(`getAssigneesCount: ${assignees.data.length}`);
+  core.debug(`getAssigneesCount: ${JSON.stringify(assignees.data)}`);
 
   return assignees.data.length;
 }
@@ -51,12 +55,15 @@ async function hasTaskNumber() {
 
 async function hasAssignees() {
   const count = await getAssigneesCount();
+  core.debug(`hasAssignees count: ${count}`);
 
   return count > 0;
 }
 
 async function missingAssignees() {
   const { isAsigneeRequired } = useInputs();
+
+  core.debug(`isAsigneeRequired: ${isAsigneeRequired}`);
 
   if (!isAsigneeRequired) {
     return false;
