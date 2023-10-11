@@ -8,7 +8,7 @@ inputs:
     description: 'Whether a reviewer is required or not'
     required: true
     default: 'true'
-  asigneeRequired:
+  assigneeRequired:
     description: 'Whether an asignee is required or not'
     required: true
     default: 'true'
