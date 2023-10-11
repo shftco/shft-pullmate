@@ -14,9 +14,11 @@
     "strict": true,
     "skipLibCheck": true,
     "newLine": "lf",
+    "typeRoots": ["./src/@types"],
     "paths": {
       "@app/lib": ["src/lib"],
-      "@app/constants": ["src/constants"]
+      "@app/constants": ["src/constants"],
+      "@app/hooks": ["src/hooks"]
     }
   },
   "exclude": ["./dist", "./node_modules", "./__tests__", "./coverage"]
