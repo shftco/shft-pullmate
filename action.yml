@@ -1,14 +1,29 @@
-name: 'The name of your action here'
-description: 'Provide a description here'
-author: 'Your name or organization here'
+name: 'SHFT PullMate'
+description: 'A GitHub Action that checks if a pull request meets the requirements of the SHFT workflow'
+author: 'SHFT'
 
 # Define your inputs here.
 inputs:
-  milliseconds:
-    description: 'Your input description here'
+  reviewerRequired:
+    description: 'Whether a reviewer is required or not'
     required: true
-    default: '1000'
-
+    default: 'true'
+  assigneeRequired:
+    description: 'Whether an asignee is required or not'
+    required: true
+    default: 'true'
+  checklistRequired:
+    description: 'Whether a checklist is required or not'
+    required: true
+    default: 'true'
+  semanticTitleRequired:
+    description: 'Whether a semantic title is required or not'
+    required: true
+    default: 'true'
+  repoToken:
+    description: 'The repository token'
+    required: true
+  
 # Define your outputs here.
 outputs:
   time:
