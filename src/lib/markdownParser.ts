@@ -106,11 +106,8 @@ async function missingTaskId() {
   const isValid = await pullRequest.hasTaskNumber();
   const isChecked = checkedTaskId();
 
-  core.debug(`Task ID is valid: ${isValid}`);
-  core.debug(`Task ID is checked: ${isChecked}`);
-
   if (isChecked) {
-    return isValid;
+    return !isValid;
   }
 
   return false;

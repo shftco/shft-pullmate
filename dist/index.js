@@ -10016,7 +10016,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const github = __importStar(__nccwpck_require__(5438));
-const core = __importStar(__nccwpck_require__(2186));
 const lib_1 = __nccwpck_require__(6791);
 const constants_1 = __nccwpck_require__(6526);
 const hooks_1 = __nccwpck_require__(1329);
@@ -10096,10 +10095,8 @@ async function missingImageOrVideo() {
 async function missingTaskId() {
     const isValid = await lib_1.pullRequest.hasTaskNumber();
     const isChecked = checkedTaskId();
-    core.debug(`Task ID is valid: ${isValid}`);
-    core.debug(`Task ID is checked: ${isChecked}`);
     if (isChecked) {
-        return isValid;
+        return !isValid;
     }
     return false;
 }
@@ -10155,7 +10152,6 @@ var __importStar = (this && this.__importStar) || function (mod) {
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
 const github = __importStar(__nccwpck_require__(5438));
-const core = __importStar(__nccwpck_require__(2186));
 const hooks_1 = __nccwpck_require__(1329);
 const constants_1 = __nccwpck_require__(6526);
 async function getPRInfo() {
@@ -10188,8 +10184,6 @@ async function hasTaskNumber() {
     const { title } = await getPRInfo();
     const regex = /\[(.*?)\]/g;
     const taskNumber = title.match(regex);
-    core.debug(`Task number: ${taskNumber}`);
-    core.debug(`Task title: ${title}`);
     if (!taskNumber) {
         return false;
     }
