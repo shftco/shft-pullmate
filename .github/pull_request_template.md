@@ -1,4 +1,4 @@
-## Checklist
+# Checklist
 
 <!-- checklist-start -->
 
