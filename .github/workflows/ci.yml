@@ -66,7 +66,7 @@ jobs:
         uses: ./
         with:
           reviewerRequired: true
-          asigneeRequired: true
+          assigneeRequired: true
           checklistRequired: true
           semanticTitleRequired: true
           repoToken: ${{ secrets.SECRET_TOKEN }}
