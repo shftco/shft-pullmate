@@ -15,11 +15,11 @@ function extractChecklistContent() {
 }
 
 function hasChecklist() {
-  const content = extractChecklistContent();
+  const rawContent = github.context.payload.pull_request?.body ?? '';
 
   if (
-    !content.includes(CHECKLIST_KEYS.START) ||
-    !content.includes(CHECKLIST_KEYS.END)
+    !rawContent.includes(CHECKLIST_KEYS.START) ||
+    !rawContent.includes(CHECKLIST_KEYS.END)
   ) {
     return false;
   }

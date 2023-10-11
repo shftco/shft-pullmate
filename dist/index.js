@@ -10016,9 +10016,9 @@ function extractChecklistContent() {
     return checklistContent;
 }
 function hasChecklist() {
-    const content = extractChecklistContent();
-    if (!content.includes(constants_1.CHECKLIST_KEYS.START) ||
-        !content.includes(constants_1.CHECKLIST_KEYS.END)) {
+    const rawContent = github.context.payload.pull_request?.body ?? '';
+    if (!rawContent.includes(constants_1.CHECKLIST_KEYS.START) ||
+        !rawContent.includes(constants_1.CHECKLIST_KEYS.END)) {
         return false;
     }
     return true;
