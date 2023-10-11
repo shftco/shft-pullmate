@@ -39,7 +39,9 @@ async function commentErrors(errors: string[]) {
   const hasErrors = errors.length > 0 || checklistErrors.length > 0;
 
   if (hasErrors) {
-    core.setFailed('Some requirements are not met');
+    const allErrors = [...errors, ...checklistErrors];
+
+    core.setFailed(allErrors.join('\n'));
   }
 
   const messageBody = hasErrors
