@@ -78,7 +78,9 @@ function checkedTaskId() {
 function checkedImageOrVideo() {
   const parsed = parseContentAsJSON();
 
-  const UIQuestion = parsed.find(item => item.q === QUESTIONS.UI_CHANGED);
+  const UIQuestion = parsed.find(
+    item => item.q.trim() === QUESTIONS.UI_CHANGED.trim()
+  );
 
   if (UIQuestion?.isChecked) {
     return true;
@@ -99,7 +101,7 @@ async function missingImageOrVideo() {
     return false;
   }
 
-  return !hasAnyImageOrVideo();
+  return !(await hasAnyImageOrVideo());
 }
 
 async function missingTaskId() {
