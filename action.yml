@@ -2,7 +2,6 @@ name: 'SHFT PullMate'
 description: 'A GitHub Action that checks if a pull request meets the requirements of the SHFT workflow'
 author: 'SHFT'
 
-# Define your inputs here.
 inputs:
   reviewerRequired:
     description: 'Whether a reviewer is required or not'
@@ -23,11 +22,6 @@ inputs:
   repoToken:
     description: 'The repository token'
     required: true
-  
-# Define your outputs here.
-outputs:
-  time:
-    description: 'Your output description here'
 
 runs:
   using: node20
