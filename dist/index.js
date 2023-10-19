@@ -9883,9 +9883,12 @@ async function removeOldPRComments() {
     });
 }
 async function commentErrors(errors) {
-    const { isDraft, PROwner } = await lib_1.pullRequest.getPRInfo();
+    const { isDraft, PROwner, isMerged } = await lib_1.pullRequest.getPRInfo();
+    if (isMerged) {
+        return;
+    }
     if (isDraft) {
-        commentDraftPR();
+        await commentDraftPR();
         return;
     }
     await removeOldPRComments();
@@ -10170,7 +10173,8 @@ async function getPRInfo() {
         isClosed: issue?.data?.state === 'closed',
         isAssigned: !!issue?.data?.assignee,
         hasReviewers: !!PR?.data?.requested_reviewers?.length,
-        PROwner: PR?.data?.user?.login ?? ''
+        PROwner: PR?.data?.user?.login ?? '',
+        isMerged: PR?.data?.merged_at !== null
     };
 }
 async function hasSemanticTitle() {
