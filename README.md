@@ -65,3 +65,4 @@ jobs:
           semanticBranchNameRequired: true # If true, the PR must have a semantic branch name
           repoToken: ${{ secrets.SECRET_TOKEN }} # Personal Access Token with repo scope
 ```
+test
