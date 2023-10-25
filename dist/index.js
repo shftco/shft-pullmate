@@ -10275,7 +10275,7 @@ async function missingSemanticBranchName() {
     return isInvalidBranchName(branchName);
 }
 function isInvalidBranchName(title) {
-    if (!constants_1.PULL_REQUEST.PREFIXES.some(prefix => title.startsWith(prefix))) {
+    if (!constants_1.PULL_REQUEST.PREFIXES.some(prefix => title.startsWith(`${prefix}/`))) {
         return true;
     }
     const titleRegex = /^[a-z]+(?:\/[a-z-]+)+$/;
