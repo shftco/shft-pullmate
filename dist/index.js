@@ -9963,7 +9963,7 @@ async function commentAndClosePR() {
     await octokit.rest.issues.createComment({
         ...github.context.repo,
         issue_number: github.context.issue.number,
-        body: `BOT MESSAGE :robot:\n\n\nPlease follow the semantic branch naming convention :construction:\n\n\n@${PROwner}`
+        body: `BOT MESSAGE :robot:\n\n\nPlease follow the semantic branch naming convention :construction:\n\nSee the [Semantic Branch Name Documentation](https://github.com/shftco/shft-pullmate/blob/main/docs/SEMANTIC_BRANCH_NAMING.md) for more information.\n\n\n@${PROwner}`
     });
     await octokit.rest.pulls.update({
         ...github.context.repo,
@@ -10395,7 +10395,7 @@ async function run() {
             errors.push('Pull request must have a checklist.');
         }
         if (await lib_1.pullRequest.missingSemanticTitle()) {
-            errors.push('Pull request must have a semantic title.');
+            errors.push('Pull request must have a semantic title. See the [Semantic Title Documentation](https://github.com/shftco/shft-pullmate/blob/main/docs/SEMANTIC_TITLE_NAMING.md) for more information.');
         }
         if (await lib_1.pullRequest.missingReviewers()) {
             errors.push('Pull request must have at least one reviewer.');

@@ -27,7 +27,9 @@ export async function run(): Promise<void> {
     }
 
     if (await pullRequest.missingSemanticTitle()) {
-      errors.push('Pull request must have a semantic title.');
+      errors.push(
+        'Pull request must have a semantic title. See the [Semantic Title Documentation](https://github.com/shftco/shft-pullmate/blob/main/docs/SEMANTIC_TITLE_NAMING.md) for more information.'
+      );
     }
 
     if (await pullRequest.missingReviewers()) {
