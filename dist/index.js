@@ -9914,8 +9914,8 @@ async function removeOldPRComments() {
     });
 }
 async function commentErrors(errors) {
-    const { isDraft, PROwner, isMerged } = await lib_1.pullRequest.getPRInfo();
-    if (isMerged) {
+    const { isDraft, PROwner, isMerged, isClosed } = await lib_1.pullRequest.getPRInfo();
+    if (isMerged || isClosed) {
         return;
     }
     if (isDraft) {
