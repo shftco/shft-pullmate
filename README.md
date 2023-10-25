@@ -62,5 +62,6 @@ jobs:
           assigneeRequired: true # If true, the PR must have at least one assignee
           checklistRequired: true # If true, the PR must have a checklist on the PR body
           semanticTitleRequired: true # If true, the PR must have a semantic title. The title must follow the conventional commits specification
+          semanticPRTitleRequired: true # If true, the PR must have a semantic title
           repoToken: ${{ secrets.SECRET_TOKEN }} # Personal Access Token with repo scope
 ```

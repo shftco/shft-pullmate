@@ -19,6 +19,10 @@ inputs:
     description: 'Whether a semantic title is required or not'
     required: true
     default: 'true'
+  semanticPRTitleRequired:
+    description: 'Whether a semantic PR title is required or not'
+    required: true
+    default: 'true'
   repoToken:
     description: 'The repository token'
     required: true

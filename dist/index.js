@@ -9679,7 +9679,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", ({ value: true }));
-exports.QUESTIONS = exports.INPUT_KEYS = exports.COMMIT_KEYS = exports.CHECKLIST_KEYS = void 0;
+exports.PULL_REQUEST = exports.QUESTIONS = exports.INPUT_KEYS = exports.COMMIT_KEYS = exports.CHECKLIST_KEYS = void 0;
 const checklistKeys_1 = __importDefault(__nccwpck_require__(6068));
 exports.CHECKLIST_KEYS = checklistKeys_1.default;
 const commitKeys_1 = __importDefault(__nccwpck_require__(2546));
@@ -9688,6 +9688,8 @@ const inputKeys_1 = __importDefault(__nccwpck_require__(9913));
 exports.INPUT_KEYS = inputKeys_1.default;
 const questions_1 = __importDefault(__nccwpck_require__(8080));
 exports.QUESTIONS = questions_1.default;
+const pullRequest_1 = __importDefault(__nccwpck_require__(577));
+exports.PULL_REQUEST = pullRequest_1.default;
 
 
 /***/ }),
@@ -9703,9 +9705,36 @@ const INPUT_KEYS = Object.freeze({
     ASSIGNEE_REQUIRED: 'assigneeRequired',
     CHECKLIST_REQUIRED: 'checklistRequired',
     SEMANTIC_TITLE_REQUIRED: 'semanticTitleRequired',
+    SEMANTIC_PR_TITLE_REQUIRED: 'semanticPRTitleRequired',
     REPO_TOKEN: 'repoToken'
 });
 exports["default"] = INPUT_KEYS;
+
+
+/***/ }),
+
+/***/ 577:
+/***/ ((__unused_webpack_module, exports) => {
+
+"use strict";
+
+Object.defineProperty(exports, "__esModule", ({ value: true }));
+const PULL_REQUEST = Object.freeze({
+    PREFIXES: Object.freeze([
+        'build',
+        'chore',
+        'ci',
+        'docs',
+        'feature',
+        'fix',
+        'perf',
+        'refactor',
+        'revert',
+        'style',
+        'test'
+    ])
+});
+exports["default"] = PULL_REQUEST;
 
 
 /***/ }),
@@ -9779,12 +9808,14 @@ function useInputs() {
     const isAssigneeRequired = Boolean(core.getInput(constants_1.INPUT_KEYS.ASSIGNEE_REQUIRED, { required: true }));
     const isChecklistRequired = Boolean(core.getInput(constants_1.INPUT_KEYS.CHECKLIST_REQUIRED, { required: true }));
     const isSemanticTitleRequired = Boolean(core.getInput(constants_1.INPUT_KEYS.SEMANTIC_TITLE_REQUIRED, { required: true }));
+    const isSemanticPRTitleRequired = Boolean(core.getInput(constants_1.INPUT_KEYS.SEMANTIC_PR_TITLE_REQUIRED, { required: true }));
     const repoToken = core.getInput(constants_1.INPUT_KEYS.REPO_TOKEN, { required: true });
     return {
         isReviewerRequired,
         isAssigneeRequired,
         isChecklistRequired,
         isSemanticTitleRequired,
+        isSemanticPRTitleRequired,
         repoToken
     };
 }
@@ -9891,6 +9922,10 @@ async function commentErrors(errors) {
         await commentDraftPR();
         return;
     }
+    if (await lib_1.pullRequest.missingSemanticPRTitle()) {
+        await commentAndClosePR();
+        return;
+    }
     await removeOldPRComments();
     const octokit = (0, hooks_1.useOctokit)();
     const checklistErrors = lib_1.checklist.extractErrorMessages();
@@ -9920,6 +9955,20 @@ async function commentDraftPR() {
         ...github.context.repo,
         issue_number: github.context.issue.number,
         body: `BOT MESSAGE :robot:\n\n\nPullMate skips the checklist for draft PRs :construction:`
+    });
+}
+async function commentAndClosePR() {
+    const octokit = (0, hooks_1.useOctokit)();
+    const { PROwner } = await lib_1.pullRequest.getPRInfo();
+    await octokit.rest.issues.createComment({
+        ...github.context.repo,
+        issue_number: github.context.issue.number,
+        body: `BOT MESSAGE :robot:\n\n\nPlease follow the semantic branch naming convention :construction:\n\n\n@${PROwner}`
+    });
+    await octokit.rest.pulls.update({
+        ...github.context.repo,
+        pull_number: github.context.issue.number,
+        state: 'closed'
     });
 }
 exports["default"] = { commentErrors };
@@ -10174,6 +10223,7 @@ async function getPRInfo() {
         isAssigned: !!issue?.data?.assignee,
         hasReviewers: !!PR?.data?.requested_reviewers?.length,
         PROwner: PR?.data?.user?.login ?? '',
+        branchName: PR?.data?.head?.ref ?? '',
         isMerged: PR?.data?.merged_at !== null
     };
 }
@@ -10216,13 +10266,32 @@ async function missingReviewers() {
     }
     return !hasReviewers;
 }
+async function missingSemanticPRTitle() {
+    const { isSemanticPRTitleRequired } = (0, hooks_1.useInputs)();
+    const { branchName } = await getPRInfo();
+    if (!isSemanticPRTitleRequired) {
+        return false;
+    }
+    return isInvalidPRTitle(branchName);
+}
+function isInvalidPRTitle(title) {
+    if (!constants_1.PULL_REQUEST.PREFIXES.some(prefix => title.startsWith(prefix))) {
+        return true;
+    }
+    const titleRegex = /^[a-z]+(?:\/[a-z-]+)+$/;
+    if (!titleRegex.test(title)) {
+        return true;
+    }
+    return false;
+}
 exports["default"] = {
     getPRInfo,
     hasSemanticTitle,
     hasTaskNumber,
     missingAssignees,
     missingSemanticTitle,
-    missingReviewers
+    missingReviewers,
+    missingSemanticPRTitle
 };
 
 
