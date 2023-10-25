@@ -89,7 +89,7 @@ async function commentAndClosePR() {
   await octokit.rest.issues.createComment({
     ...github.context.repo,
     issue_number: github.context.issue.number,
-    body: `BOT MESSAGE :robot:\n\n\nPlease follow the semantic branch naming convention :construction:\n\n\n@${PROwner}`
+    body: `BOT MESSAGE :robot:\n\n\nPlease follow the semantic branch naming convention :construction:\n\nSee the [Semantic Branch Name Documentation](https://github.com/shftco/shft-pullmate/blob/main/docs/SEMANTIC_BRANCH_NAMING.md) for more information.\n\n\n@${PROwner}`
   });
 
   await octokit.rest.pulls.update({
