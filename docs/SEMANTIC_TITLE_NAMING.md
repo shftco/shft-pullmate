@@ -41,8 +41,10 @@
 - `docs: update Readme`
 - `feat: add new feature`
 - `fix: login bug`
+- `fix: login bug with task id [PLM-123]`
 
 **Invalid PR Titles**
 - `update Readme`
 - `add new feature`
 - `bug: login bug`
+- `fix: login bug with task id PLM-123`
