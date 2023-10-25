@@ -19,6 +19,10 @@ inputs:
     description: 'Whether a semantic title is required or not'
     required: true
     default: 'true'
+  semanticBranchNameRequired:
+    description: 'Whether a semantic branch name is required or not'
+    required: true
+    default: 'true'
   repoToken:
     description: 'The repository token'
     required: true

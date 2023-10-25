@@ -2,7 +2,7 @@ import * as github from '@actions/github';
 import * as core from '@actions/core';
 
 import { useOctokit, useInputs } from '@app/hooks';
-import { COMMIT_KEYS } from '@app/constants';
+import { COMMIT_KEYS, PULL_REQUEST } from '@app/constants';
 
 async function getPRInfo() {
   const octokit = useOctokit();
@@ -24,6 +24,7 @@ async function getPRInfo() {
     isAssigned: !!issue?.data?.assignee,
     hasReviewers: !!PR?.data?.requested_reviewers?.length,
     PROwner: PR?.data?.user?.login ?? '',
+    branchName: PR?.data?.head?.ref ?? '',
     isMerged: PR?.data?.merged_at !== null
   };
 }
@@ -83,11 +84,37 @@ async function missingReviewers() {
   return !hasReviewers;
 }
 
+async function missingSemanticBranchName() {
+  const { isSemanticBranchNameRequired } = useInputs();
+  const { branchName } = await getPRInfo();
+
+  if (!isSemanticBranchNameRequired) {
+    return false;
+  }
+
+  return isInvalidBranchName(branchName);
+}
+
+function isInvalidBranchName(title: string) {
+  if (!PULL_REQUEST.PREFIXES.some(prefix => title.startsWith(prefix))) {
+    return true;
+  }
+
+  const titleRegex = /^[a-z]+(?:\/[a-z-]+)+$/;
+
+  if (!titleRegex.test(title)) {
+    return true;
+  }
+
+  return false;
+}
+
 export default {
   getPRInfo,
   hasSemanticTitle,
   hasTaskNumber,
   missingAssignees,
   missingSemanticTitle,
-  missingReviewers
+  missingReviewers,
+  missingSemanticBranchName
 };

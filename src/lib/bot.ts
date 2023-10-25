@@ -36,6 +36,11 @@ async function commentErrors(errors: string[]) {
     return;
   }
 
+  if (await pullRequest.missingSemanticBranchName()) {
+    await commentAndClosePR();
+    return;
+  }
+
   await removeOldPRComments();
 
   const octokit = useOctokit();
@@ -73,6 +78,23 @@ async function commentDraftPR() {
     ...github.context.repo,
     issue_number: github.context.issue.number,
     body: `BOT MESSAGE :robot:\n\n\nPullMate skips the checklist for draft PRs :construction:`
+  });
+}
+
+async function commentAndClosePR() {
+  const octokit = useOctokit();
+  const { PROwner } = await pullRequest.getPRInfo();
+
+  await octokit.rest.issues.createComment({
+    ...github.context.repo,
+    issue_number: github.context.issue.number,
+    body: `BOT MESSAGE :robot:\n\n\nPlease follow the semantic branch naming convention :construction:\n\n\n@${PROwner}`
+  });
+
+  await octokit.rest.pulls.update({
+    ...github.context.repo,
+    pull_number: github.context.issue.number,
+    state: 'closed'
   });
 }
 
