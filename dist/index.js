@@ -9705,7 +9705,7 @@ const INPUT_KEYS = Object.freeze({
     ASSIGNEE_REQUIRED: 'assigneeRequired',
     CHECKLIST_REQUIRED: 'checklistRequired',
     SEMANTIC_TITLE_REQUIRED: 'semanticTitleRequired',
-    SEMANTIC_PR_TITLE_REQUIRED: 'semanticPRTitleRequired',
+    SEMANTIC_BRANCH_NAME_REQUIRED: 'semanticBranchNameRequired',
     REPO_TOKEN: 'repoToken'
 });
 exports["default"] = INPUT_KEYS;
@@ -9808,14 +9808,14 @@ function useInputs() {
     const isAssigneeRequired = Boolean(core.getInput(constants_1.INPUT_KEYS.ASSIGNEE_REQUIRED, { required: true }));
     const isChecklistRequired = Boolean(core.getInput(constants_1.INPUT_KEYS.CHECKLIST_REQUIRED, { required: true }));
     const isSemanticTitleRequired = Boolean(core.getInput(constants_1.INPUT_KEYS.SEMANTIC_TITLE_REQUIRED, { required: true }));
-    const isSemanticPRTitleRequired = Boolean(core.getInput(constants_1.INPUT_KEYS.SEMANTIC_PR_TITLE_REQUIRED, { required: true }));
+    const isSemanticBranchNameRequired = Boolean(core.getInput(constants_1.INPUT_KEYS.SEMANTIC_BRANCH_NAME_REQUIRED, { required: true }));
     const repoToken = core.getInput(constants_1.INPUT_KEYS.REPO_TOKEN, { required: true });
     return {
         isReviewerRequired,
         isAssigneeRequired,
         isChecklistRequired,
         isSemanticTitleRequired,
-        isSemanticPRTitleRequired,
+        isSemanticBranchNameRequired,
         repoToken
     };
 }
@@ -9922,7 +9922,7 @@ async function commentErrors(errors) {
         await commentDraftPR();
         return;
     }
-    if (await lib_1.pullRequest.missingSemanticPRTitle()) {
+    if (await lib_1.pullRequest.missingSemanticBranchName()) {
         await commentAndClosePR();
         return;
     }
@@ -10266,15 +10266,15 @@ async function missingReviewers() {
     }
     return !hasReviewers;
 }
-async function missingSemanticPRTitle() {
-    const { isSemanticPRTitleRequired } = (0, hooks_1.useInputs)();
+async function missingSemanticBranchName() {
+    const { isSemanticBranchNameRequired } = (0, hooks_1.useInputs)();
     const { branchName } = await getPRInfo();
-    if (!isSemanticPRTitleRequired) {
+    if (!isSemanticBranchNameRequired) {
         return false;
     }
-    return isInvalidPRTitle(branchName);
+    return isInvalidBranchName(branchName);
 }
-function isInvalidPRTitle(title) {
+function isInvalidBranchName(title) {
     if (!constants_1.PULL_REQUEST.PREFIXES.some(prefix => title.startsWith(prefix))) {
         return true;
     }
@@ -10291,7 +10291,7 @@ exports["default"] = {
     missingAssignees,
     missingSemanticTitle,
     missingReviewers,
-    missingSemanticPRTitle
+    missingSemanticBranchName
 };
 
 

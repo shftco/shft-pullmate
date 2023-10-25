@@ -19,8 +19,8 @@ inputs:
     description: 'Whether a semantic title is required or not'
     required: true
     default: 'true'
-  semanticPRTitleRequired:
-    description: 'Whether a semantic PR title is required or not'
+  semanticBranchNameRequired:
+    description: 'Whether a semantic branch name is required or not'
     required: true
     default: 'true'
   repoToken:

@@ -7,7 +7,7 @@ type UseInputsReturnTypes = {
   isAssigneeRequired: boolean;
   isChecklistRequired: boolean;
   isSemanticTitleRequired: boolean;
-  isSemanticPRTitleRequired: boolean;
+  isSemanticBranchNameRequired: boolean;
   repoToken: string;
 };
 
@@ -28,8 +28,8 @@ export default function useInputs(): UseInputsReturnTypes {
     core.getInput(INPUT_KEYS.SEMANTIC_TITLE_REQUIRED, { required: true })
   );
 
-  const isSemanticPRTitleRequired = Boolean(
-    core.getInput(INPUT_KEYS.SEMANTIC_PR_TITLE_REQUIRED, { required: true })
+  const isSemanticBranchNameRequired = Boolean(
+    core.getInput(INPUT_KEYS.SEMANTIC_BRANCH_NAME_REQUIRED, { required: true })
   );
 
   const repoToken = core.getInput(INPUT_KEYS.REPO_TOKEN, { required: true });
@@ -39,7 +39,7 @@ export default function useInputs(): UseInputsReturnTypes {
     isAssigneeRequired,
     isChecklistRequired,
     isSemanticTitleRequired,
-    isSemanticPRTitleRequired,
+    isSemanticBranchNameRequired,
     repoToken
   };
 }

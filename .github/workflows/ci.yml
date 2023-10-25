@@ -69,5 +69,5 @@ jobs:
           assigneeRequired: true
           checklistRequired: true
           semanticTitleRequired: true
-          semanticPRTitleRequired: true
+          semanticBranchNameRequired: true
           repoToken: ${{ secrets.SECRET_TOKEN }}

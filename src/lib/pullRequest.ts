@@ -84,18 +84,18 @@ async function missingReviewers() {
   return !hasReviewers;
 }
 
-async function missingSemanticPRTitle() {
-  const { isSemanticPRTitleRequired } = useInputs();
+async function missingSemanticBranchName() {
+  const { isSemanticBranchNameRequired } = useInputs();
   const { branchName } = await getPRInfo();
 
-  if (!isSemanticPRTitleRequired) {
+  if (!isSemanticBranchNameRequired) {
     return false;
   }
 
-  return isInvalidPRTitle(branchName);
+  return isInvalidBranchName(branchName);
 }
 
-function isInvalidPRTitle(title: string) {
+function isInvalidBranchName(title: string) {
   if (!PULL_REQUEST.PREFIXES.some(prefix => title.startsWith(prefix))) {
     return true;
   }
@@ -116,5 +116,5 @@ export default {
   missingAssignees,
   missingSemanticTitle,
   missingReviewers,
-  missingSemanticPRTitle
+  missingSemanticBranchName
 };

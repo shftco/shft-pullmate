@@ -36,7 +36,7 @@ async function commentErrors(errors: string[]) {
     return;
   }
 
-  if (await pullRequest.missingSemanticPRTitle()) {
+  if (await pullRequest.missingSemanticBranchName()) {
     await commentAndClosePR();
     return;
   }
