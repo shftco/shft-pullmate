@@ -25,9 +25,10 @@ async function removeOldPRComments() {
 }
 
 async function commentErrors(errors: string[]) {
-  const { isDraft, PROwner, isMerged } = await pullRequest.getPRInfo();
+  const { isDraft, PROwner, isMerged, isClosed } =
+    await pullRequest.getPRInfo();
 
-  if (isMerged) {
+  if (isMerged || isClosed) {
     return;
   }
 
