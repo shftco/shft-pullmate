@@ -96,7 +96,7 @@ async function missingSemanticBranchName() {
 }
 
 function isInvalidBranchName(title: string) {
-  if (!PULL_REQUEST.PREFIXES.some(prefix => title.startsWith(prefix))) {
+  if (!PULL_REQUEST.PREFIXES.some(prefix => title.startsWith(`${prefix}/`))) {
     return true;
   }
 
