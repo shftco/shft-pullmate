@@ -4,6 +4,9 @@
 
 This GitHub Action reviews the content of opened Pull Requests based on provided inputs. The Pull Request contains a checklist that is used to determine if specific requirements are met. If the PR does not meet the requirements, it comments on the PR with a list of missing requirements.
 
+## Installation
+Go to the [documentation](https://github.com/shftco/shft-config/tree/main/pullmate) to learn more.
+
 ## Usage
 
 The belowing YAML code outlines the configuration for using the "SHFT PullMate" GitHub Action. In this setup, the action is triggered whenever a pull request event occurs. This includes events such as when a pull request is opened, closed, labeled, or when changes are made to it. The action is designed to operate concurrently with other actions, ensuring that multiple pull requests can be processed simultaneously.
