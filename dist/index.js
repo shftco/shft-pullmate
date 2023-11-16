@@ -9907,6 +9907,10 @@ async function removeOldPRComments() {
         if (!comment.body?.includes('BOT MESSAGE')) {
             return;
         }
+        // skip replies
+        if (comment.body?.includes('> BOT MESSAGE')) {
+            return;
+        }
         octokit.rest.issues.deleteComment({
             ...github.context.repo,
             comment_id: comment.id
@@ -9919,10 +9923,12 @@ async function commentErrors(errors) {
         return;
     }
     if (isDraft) {
+        await removeOldPRComments();
         await commentDraftPR();
         return;
     }
     if (await lib_1.pullRequest.missingSemanticBranchName()) {
+        await removeOldPRComments();
         await commentAndClosePR();
         return;
     }
