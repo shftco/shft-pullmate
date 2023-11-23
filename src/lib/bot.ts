@@ -17,6 +17,11 @@ async function removeOldPRComments() {
       return;
     }
 
+    // skip replies
+    if (comment.body?.includes('> BOT MESSAGE')) {
+      return;
+    }
+
     octokit.rest.issues.deleteComment({
       ...github.context.repo,
       comment_id: comment.id
@@ -33,11 +38,13 @@ async function commentErrors(errors: string[]) {
   }
 
   if (isDraft) {
+    await removeOldPRComments();
     await commentDraftPR();
     return;
   }
 
   if (await pullRequest.missingSemanticBranchName()) {
+    await removeOldPRComments();
     await commentAndClosePR();
     return;
   }
