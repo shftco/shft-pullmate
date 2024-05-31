@@ -5,6 +5,7 @@ const PULL_REQUEST = Object.freeze({
     'ci',
     'docs',
     'feature',
+    'feat',
     'fix',
     'perf',
     'refactor',
