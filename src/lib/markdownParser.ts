@@ -95,7 +95,7 @@ async function hasAnyImageOrVideo() {
   const rawContent = github.context.payload.pull_request?.body ?? '';
   const { repo, owner } = await repository.getRepositoryInfo();
 
-  return rawContent.includes(`https://github.com/${owner}/${repo}/assets/`);
+  return rawContent.includes('https://github.com/user-attachments');
 }
 
 async function missingImageOrVideo() {

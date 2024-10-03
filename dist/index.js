@@ -9726,6 +9726,7 @@ const PULL_REQUEST = Object.freeze({
         'ci',
         'docs',
         'feature',
+        'feat',
         'fix',
         'perf',
         'refactor',
@@ -10142,7 +10143,7 @@ function checkedImageOrVideo() {
 async function hasAnyImageOrVideo() {
     const rawContent = github.context.payload.pull_request?.body ?? '';
     const { repo, owner } = await lib_1.repository.getRepositoryInfo();
-    return rawContent.includes(`https://github.com/${owner}/${repo}/assets/`);
+    return rawContent.includes('https://github.com/user-attachments');
 }
 async function missingImageOrVideo() {
     if (!checkedImageOrVideo()) {
